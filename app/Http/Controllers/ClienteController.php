@@ -51,8 +51,8 @@ class ClienteController extends Controller
      */
     public function edit(string $id)
     {
-        $cliente = Cliente::findOrFail($id);
-        return view('clientes.index', compact('cliente'));
+        //$cliente = Cliente::findOrFail($id);
+        //return view('clientes.edit', compact('cliente'));
     }
 
     /**
@@ -60,17 +60,19 @@ class ClienteController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
-        $cliente = request()->except(['_token','_method']);
 
-        $cliente = Cliente::findOrFail($id);
-        $cliente->Nombre_cli = $request->Nombre_cli;
-        $cliente->Apellidos_cli = $request->Apellidos_cli;
-        $cliente->Cedula_cli = $request->Cedula_cli;
-        $cliente->Telefono_cli = $request->Telefono_cli;
-        $cliente->Direccion_cli = $request->Direccion_cli;
-        $cliente->save();
-    
+
+        $datoscliente = Cliente::findOrFail($id);
+
+        $datoscliente -> Nombre_cli = $request->get('Nombre_cli');
+        $datoscliente -> Apellidos_cli = $request->get('Apellidos_cli');
+        $datoscliente -> Cedula_cli = $request->get('Cedula_cli');
+        $datoscliente -> Telefono_cli = $request->get('Telefono_cli');
+        $datoscliente -> Direccion_cli = $request->get('Direccion_cli');
+
+        $datoscliente->save();
+
+        
         return redirect('clientes')->with('mensaje','Cliente actualizado con éxito!.');
     }
 

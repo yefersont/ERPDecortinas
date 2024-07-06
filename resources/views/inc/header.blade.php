@@ -40,7 +40,7 @@
         <nav class="navegacion">
             <ul>
                 <li>
-                    <a id="inbox" href="{{ url('cotizaciones/') }}">
+                    <a href="{{ url('cotizaciones/') }}">
                         <ion-icon name="mail-unread-outline"></ion-icon>
                         <span>Cotizaciones</span>
                     </a>
@@ -97,6 +97,8 @@
         </div>
 
     </div>
+
+    
 
 
 

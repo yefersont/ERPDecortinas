@@ -8,39 +8,68 @@ const circulo = document.querySelector(".circulo");
 const menu = document.querySelector(".menu");
 const main = document.querySelector("main");
 
-menu.addEventListener("click",()=>{
+// Función para activar el modo oscuro
+function activarModoOscuro() {
+    let body = document.body;
+    body.classList.add("dark-mode");
+    circulo.classList.add("prendido");
+}
+
+// Función para desactivar el modo oscuro
+function desactivarModoOscuro() {
+    let body = document.body;
+    body.classList.remove("dark-mode");
+    circulo.classList.remove("prendido");
+}
+
+// Verificar estado de modo oscuro al cargar la página
+document.addEventListener("DOMContentLoaded", function() {
+    const modoOscuroActivado = localStorage.getItem("modoOscuro");
+    if (modoOscuroActivado === "true") {
+        activarModoOscuro();
+    }
+});
+
+// Cambiar estado de modo oscuro al hacer clic en la palanca
+palanca.addEventListener("click", () => {
+    let body = document.body;
+    if (body.classList.contains("dark-mode")) {
+        desactivarModoOscuro();
+        localStorage.setItem("modoOscuro", "false");
+    } else {
+        activarModoOscuro();
+        localStorage.setItem("modoOscuro", "true");
+    }
+});
+
+// Resto del código existente
+menu.addEventListener("click", () => {
     barraLateral.classList.toggle("max-barra-lateral");
-    if(barraLateral.classList.contains("max-barra-lateral")){
+    if (barraLateral.classList.contains("max-barra-lateral")) {
         menu.children[0].style.display = "none";
         menu.children[1].style.display = "block";
-    }
-    else{
+    } else {
         menu.children[0].style.display = "block";
         menu.children[1].style.display = "none";
     }
-    if(window.innerWidth<=320){
+    if (window.innerWidth <= 320) {
         barraLateral.classList.add("mini-barra-lateral");
         main.classList.add("min-main");
-        spans.forEach((span)=>{
+        spans.forEach((span) => {
             span.classList.add("oculto");
-        })
+        });
     }
 });
 
-palanca.addEventListener("click",()=>{
-    let body = document.body;
-    body.classList.toggle("dark-mode");
-    body.classList.toggle("");
-    circulo.classList.toggle("prendido");
-});
-
-cloud.addEventListener("click",()=>{
+cloud.addEventListener("click", () => {
     barraLateral.classList.toggle("mini-barra-lateral");
     main.classList.toggle("min-main");
-    spans.forEach((span)=>{
+    spans.forEach((span) => {
         span.classList.toggle("oculto");
     });
 });
+
+
 
 
 //new DataTable('#propietario');        
@@ -93,3 +122,7 @@ $('#tablas').DataTable({
       }, false)
     })
   })()
+
+
+  //////////////////
+

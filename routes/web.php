@@ -24,7 +24,9 @@ Route::get('/', function () {
 Route::resource('cotizaciones',CotizacioneController::class);
 Route::resource('ventas',VentaController::class);
 Route::resource('clientes',ClienteController::class);
-Route::patch('/clientes/{id}', [ClienteController::class, 'update']);
+
+Route::put('update/{id}', [ClienteController::class, 'update'])->name('ActualizarCliente');
+
 Route::resource('deudores',DeudoreController::class);
 
 

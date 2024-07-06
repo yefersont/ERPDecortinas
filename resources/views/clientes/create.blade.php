@@ -8,10 +8,12 @@
             <form action="{{ url('/clientes') }}" method="post" class="row g-3 needs-validation" novalidate>
                 @csrf
                 <div class="modal-body">
-                    <div class="row">
+
+
+                <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="input01" class="form-label">Nombres</label>
-                            <input type="text" id="input01" name="Nombre_cli" class="form-control w-75" placeholder="Ingrese nombre..." required>
+                            <input type="text" id="input01" name="Nombre_cli" class="form-control w-75" placeholder="Ingrese nombre..." required >
                             <div class="invalid-feedback">
                                 Por favor complete el campo
                             </div>
@@ -25,26 +27,27 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="input3" class="form-label">Cedula</label>
-                            <input type="text" data-input-numerico id="input3" name="Cedula_cli" class="form-control w-75" placeholder="Ingrese numero de cedula..." required>
+                            <input type="text" data-input-numerico id="input3" name="Cedula_cli" class="form-control w-75" placeholder="Ingrese numero de cedula..." required >
                             <div class="invalid-feedback">
                                 Por favor complete el campo
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="input4" class="form-label">Teléfono</label>
-                            <input type="text" data-input-numerico id="input4" name="Telefono_cli" class="form-control w-75" placeholder="Ingrese numero de celular..." required>
+                            <input type="text" data-input-numerico id="input4" name="Telefono_cli" class="form-control w-75" placeholder="Ingrese numero de celular..." required >
                             <div class="invalid-feedback">
                                 Por favor complete el campo
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="input4" class="form-label">Direccion</label>
-                            <input type="text" data-input-numerico id="input4" name="Direccion_cli" class="form-control w-75" placeholder="Ingrese direccion, barrio, etc.." required>
+                            <input type="text" data-input-numerico id="input4" name="Direccion_cli" class="form-control w-75" placeholder="Ingrese direccion, barrio, etc.." required >
                             <div class="invalid-feedback">
                                 Por favor complete el campo
                             </div>
                         </div>
                     </div>
+                    
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success"> Registrar </button>
@@ -54,3 +57,4 @@
         </div>
     </div>
 </div>
+
