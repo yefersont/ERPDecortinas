@@ -1,0 +1,336 @@
+[1mdiff --git a/app/Http/Controllers/ClienteController.php b/app/Http/Controllers/ClienteController.php[m
+[1mindex 56acc98..02662e0 100644[m
+[1m--- a/app/Http/Controllers/ClienteController.php[m
+[1m+++ b/app/Http/Controllers/ClienteController.php[m
+[36m@@ -35,7 +35,7 @@[m [mpublic function store(Request $request)[m
+         $datos = request()->except('_token');[m
+         Cliente::insert($datos);[m
+         return redirect('clientes')->with('mensaje','El cliente fue agregado con exito!!.');[m
+[31m-[m
+[32m+[m[41m        [m
+     }[m
+ [m
+     /**[m
+[1mdiff --git a/app/Http/Controllers/CotizacioneController.php b/app/Http/Controllers/CotizacioneController.php[m
+[1mindex 051a1c0..ed9afc8 100644[m
+[1m--- a/app/Http/Controllers/CotizacioneController.php[m
+[1m+++ b/app/Http/Controllers/CotizacioneController.php[m
+[36m@@ -3,6 +3,8 @@[m
+ namespace App\Http\Controllers;[m
+ [m
+ use App\Models\Cotizacione;[m
+[32m+[m[32muse App\Models\Cliente;[m
+[32m+[m[32muse App\Models\TipoProducto;[m
+ use Illuminate\Http\Request;[m
+ [m
+ class CotizacioneController extends Controller[m
+[36m@@ -15,8 +17,10 @@[m [mpublic function index()[m
+         //[m
+         [m
+         $datos['cotizaciones'] = Cotizacione::all();[m
+[31m-        return view('cotizaciones.index',$datos);[m
+[32m+[m[32m        $Tipo_producto = TipoProducto::all();[m
+[32m+[m[32m        return view('cotizaciones.index',$datos, compact('Tipo_producto'));[m
+     [m
+[32m+[m[41m        [m
+     }[m
+ [m
+     /**[m
+[36m@@ -25,6 +29,7 @@[m [mpublic function index()[m
+     public function create()[m
+     {[m
+         //[m
+[32m+[m
+     }[m
+ [m
+     /**[m
+[36m@@ -32,7 +37,42 @@[m [mpublic function create()[m
+      */[m
+     public function store(Request $request)[m
+     {[m
+[31m-        //[m
+[32m+[m[32m        $validatedData = $request->validate([[m
+[32m+[m[32m            'Cedula_cli_coti' => 'required',[m
+[32m+[m[32m            'Fecha_coti' => 'required|date',[m
+[32m+[m[32m            'Radicado_coti' => 'required',[m
+[32m+[m[32m            'Alto_coti' => 'required|numeric',[m
+[32m+[m[32m            'Ancho_coti' => 'required|numeric',[m
+[32m+[m[32m            'Tp_producto_coti' => 'required',[m
+[32m+[m[32m            'Mando_coti' => 'required',[m
+[32m+[m[32m            'Valortotal_coti' => 'required|numeric',[m
+[32m+[m[32m        ]);[m
+[32m+[m
+[32m+[m[32m        // Buscar el cliente por su número de cédula[m
+[32m+[m[32m        $cliente = Cliente::where('Cedula_cli', $validatedData['Cedula_cli_coti'])->first();[m
+[32m+[m
+[32m+[m[32m        if (!$cliente) {[m
+[32m+[m[32m            // Si el cliente no existe, redirigir con un mensaje de error[m
+[32m+[m[32m            return redirect()->back()->withErrors(['Cedula_cli_coti' => 'Cliente no encontrado.']);[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        $cotizacionData = [[m
+[32m+[m[32m            'Cedula_cli_coti' => $cliente->idClientes, // Usar el idClientes del cliente encontrado[m
+[32m+[m[32m            'Fecha_coti' => $validatedData['Fecha_coti'],[m
+[32m+[m[32m            'Radicado_coti' => $validatedData['Radicado_coti'],[m
+[32m+[m[32m            'Alto_coti' => $validatedData['Alto_coti'],[m
+[32m+[m[32m            'Ancho_coti' => $validatedData['Ancho_coti'],[m
+[32m+[m[32m            'Tp_producto_coti' => $validatedData['Tp_producto_coti'],[m
+[32m+[m[32m            'Mando_coti' => $validatedData['Mando_coti'],[m
+[32m+[m[32m            'Valortotal_coti' => $validatedData['Valortotal_coti'],[m
+[32m+[m[32m        ];[m
+[32m+[m
+[32m+[m[32m        // Insertar la cotización[m
+[32m+[m[32m        Cotizacione::insert($cotizacionData);[m
+[32m+[m
+[32m+[m[32m        // Redirigir con un mensaje de éxito[m
+[32m+[m[32m        return redirect('cotizaciones.index')->with('mensaje', 'La cotización se registró con éxito.');[m
+[32m+[m
+     }[m
+ [m
+     /**[m
+[1mdiff --git a/resources/views/cotizaciones/create.blade.php b/resources/views/cotizaciones/create.blade.php[m
+[1mindex e69de29..5af86ca 100644[m
+[1m--- a/resources/views/cotizaciones/create.blade.php[m
+[1m+++ b/resources/views/cotizaciones/create.blade.php[m
+[36m@@ -0,0 +1,135 @@[m
+[32m+[m[32m<div class="modal fadebd-example-modal-lg" id="createModalCotizaciones" data-bs-backdrop="static" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">[m
+[32m+[m[32m    <div class="modal-dialog modal-xl">[m
+[32m+[m[32m        <div class="modal-content">[m
+[32m+[m[32m            <div class="modal-header">[m
+[32m+[m[32m                <h1 class="modal-title fs-5" id="createModalLabel">Registrar Cotizacion</h1>[m
+[32m+[m[32m                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>[m
+[32m+[m[32m            </div>[m
+[32m+[m[32m            <form action="{{ url('/cotizaciones') }}" method="post" class="row g-3 needs-validation" novalidate>[m
+[32m+[m[32m                @csrf[m
+[32m+[m[32m                <div class="modal-body">[m
+[32m+[m
+[32m+[m[32m                    <div class="row">[m
+[32m+[m[32m                        <div class="col-md-3 mb-3">[m
+[32m+[m[32m                            <label for="input1" class="form-label">Cedula del Cliente</label>[m
+[32m+[m[32m                            <input type="text" id="input1" name="Cedula_cli_coti" class="form-control w-75" placeholder="Ingrese Cedula..." required>[m
+[32m+[m[32m                            <div class="invalid-feedback">[m
+[32m+[m[32m                                Por favor complete el campo[m
+[32m+[m[32m                            </div>[m
+[32m+[m[32m                        </div>[m
+[32m+[m[32m                        <div class="col-md-4 mb-3">[m
+[32m+[m[32m                            <label for="input2" class="form-label">Fecha de cotizacion</label>[m
+[32m+[m[32m                            <input type="date" id="input2" name="Fecha_coti" class="form-control w-95" required>[m
+[32m+[m[32m                            <div class="invalid-feedback">[m
+[32m+[m[32m                                Por favor complete el campo[m
+[32m+[m[32m                            </div>[m
+[32m+[m[32m                        </div>[m
+[32m+[m[32m                        <div class="col-md-4 mb-3">[m
+[32m+[m[32m                            <label for="input3" class="form-label">Radicado</label>[m
+[32m+[m[32m                            <input type="text" id="input3" name="Radicado_coti" class="form-control w-50" placeholder="Numero de radicado" required>[m
+[32m+[m[32m                            <div class="invalid-feedback">[m
+[32m+[m[32m                                Por favor complete el campo[m
+[32m+[m[32m                            </div>[m
+[32m+[m[32m                        </div>[m
+[32m+[m[32m                    </div>[m
+[32m+[m[32m                    <div class="row">[m
+[32m+[m[32m                        <div class="col-md-2 mb-3">[m
+[32m+[m[32m                            <label for="input4" class="form-label">Alto</label>[m
+[32m+[m[32m                            <input type="text" data-input-numerico id="input4" name="Alto_coti" class="form-control w-95" placeholder="Ingrese alto..." required>[m
+[32m+[m[32m                            <div class="invalid-feedback">[m
+[32m+[m[32m                                Por favor complete el campo[m
+[32m+[m[32m                            </div>[m
+[32m+[m[32m                        </div>[m
+[32m+[m[32m                        <div class="col-md-2 mb-3">[m
+[32m+[m[32m                            <label for="input5" class="form-label">Ancho</label>[m
+[32m+[m[32m                            <input type="text" data-input-numerico id="input5" name="Ancho_coti" class="form-control w-95" placeholder="Ingrese ancho..." required>[m
+[32m+[m[32m                            <div class="invalid-feedback">[m
+[32m+[m[32m                                Por favor complete el campo[m
+[32m+[m[32m                            </div>[m
+[32m+[m[32m                        </div>[m
+[32m+[m[32m                        <div class="col-md-3 mb-3">[m
+[32m+[m[32m                            <label for="input6" class="form-label">Producto</label>[m
+[32m+[m[32m                            <select id="input6" name="Tp_producto_coti" class="form-select w-100" required>[m
+[32m+[m[32m                                <option value="" disabled selected>Seleccione una opción...</option>[m
+[32m+[m[32m                            @foreach($Tipo_producto as $tp_producto)[m
+[32m+[m[32m                                <option value="{{ $tp_producto -> idTipo_producto }}">{{ $tp_producto -> Nombre_tp }}</option>[m[41m [m
+[32m+[m[32m                            @endforeach[m[41m       [m
+[32m+[m[32m                            </select>[m[41m    [m
+[32m+[m[32m                            <div class="invalid-feedback">[m
+[32m+[m[32m                                Por favor complete el campo[m
+[32m+[m[32m                            </div>[m
+[32m+[m[32m                        </div>[m
+[32m+[m[32m                        <div class="col-md-2 mb-3">[m
+[32m+[m[32m                            <label for="input7" class="form-label">Mando</label>[m
+[32m+[m[32m                            <select id="input7" name="Mando_coti" class="form-select w-100" required>[m
+[32m+[m[32m                                <option value="" disabled selected>Seleccione...</option>[m
+[32m+[m[32m                                <option value="Izquierdo" >Izquierdo</option>[m
+[32m+[m[32m                                <option value="Derecho" >Derecho</option>[m
+[32m+[m
+[32m+[m[32m                            </select>[m
+[32m+[m[32m                            <div class="invalid-feedback">[m
+[32m+[m[32m                                Por favor complete el campo[m
+[32m+[m[32m                            </div>[m
+[32m+[m[32m                        </div>[m
+[32m+[m[32m                        <div class="col-md-3 mb-3">[m
+[32m+[m[32m                            <label for="input8" class="form-label">Valor</label>[m
+[32m+[m[32m                            <input type="text" data-input-numerico id="input8" name="Valortotal_coti" class="form-control w-95" placeholder="Ingrese valor..." required>[m
+[32m+[m[32m                            <div class="invalid-feedback">[m
+[32m+[m[32m                                Por favor complete el campo[m
+[32m+[m[32m                            </div>[m
+[32m+[m[32m                        </div>[m
+[32m+[m
+[32m+[m
+[32m+[m[32m                        <script>[m
+[32m+[m[32mdocument.addEventListener("DOMContentLoaded", function() {[m
+[32m+[m[32m    const input = document.getElementById('input7');[m
+[32m+[m
+[32m+[m[32m    input.addEventListener('input', function() {[m
+[32m+[m[32m        // Get cursor position[m
+[32m+[m[32m        let cursorPosition = this.selectionStart;[m
+[32m+[m[41m        [m
+[32m+[m[32m        // Get the length of the input before formatting[m
+[32m+[m[32m        let originalLength = this.value.length;[m
+[32m+[m
+[32m+[m[32m        // Remove non-numeric characters[m
+[32m+[m[32m        let value = this.value.replace(/[^0-9]/g, '');[m
+[32m+[m[32m        if (value === '') return;[m
+[32m+[m
+[32m+[m[32m        // Format the number as currency without decimals[m
+[32m+[m[32m        let numberValue = parseInt(value);[m
+[32m+[m[32m        let formattedValue = new Intl.NumberFormat('es-CO', {[m[41m [m
+[32m+[m[32m            style: 'currency',[m[41m [m
+[32m+[m[32m            currency: 'COP',[m[41m [m
+[32m+[m[32m            minimumFractionDigits: 0[m[41m [m
+[32m+[m[32m        }).format(numberValue);[m
+[32m+[m
+[32m+[m[32m        // Update the input value with the formatted value[m
+[32m+[m[32m        this.value = formattedValue;[m
+[32m+[m
+[32m+[m[32m        // Calculate the new cursor position[m
+[32m+[m[32m        let newLength = this.value.length;[m
+[32m+[m[32m        cursorPosition = newLength - (originalLength - cursorPosition);[m
+[32m+[m
+[32m+[m[32m        // Set the cursor position back to where it was[m
+[32m+[m[32m        this.setSelectionRange(cursorPosition, cursorPosition);[m
+[32m+[m[32m    });[m
+[32m+[m
+[32m+[m[32m    const form = input.closest('form');[m
+[32m+[m[32m    form.addEventListener('submit', function() {[m
+[32m+[m[32m        let rawValue = input.value.replace(/[^0-9]/g, '');[m
+[32m+[m[32m        input.value = rawValue;[m
+[32m+[m[32m    });[m
+[32m+[m[32m});[m
+[32m+[m[32m</script>[m
+[32m+[m[32m                    </div>[m
+[32m+[m[41m                                        [m
+[32m+[m[32m                    </div>[m
+[32m+[m[32m                <div class="modal-footer">[m
+[32m+[m[32m                    <button type="submit" class="btn btn-success"> Registrar </button>[m
+[32m+[m[32m                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal"> Cancelar</button>[m
+[32m+[m[32m                </div>[m
+[32m+[m[32m            </form>[m
+[32m+[m[32m        </div>[m
+[32m+[m[32m    </div>[m
+[32m+[m[32m</div>[m
+[32m+[m
+[1mdiff --git a/resources/views/cotizaciones/index.blade.php b/resources/views/cotizaciones/index.blade.php[m
+[1mindex f0ee1a0..89530ab 100644[m
+[1m--- a/resources/views/cotizaciones/index.blade.php[m
+[1m+++ b/resources/views/cotizaciones/index.blade.php[m
+[36m@@ -1,34 +1,72 @@[m
+[32m+[m[32m@include('inc.header')[m
+ [m
+[32m+[m[32m<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">[m
+[32m+[m[32m<link href="https://cdn.datatables.net/2.0.7/css/dataTables.bootstrap5.css" rel="stylesheet">[m
+ [m
+[31m-@include('inc.header')[m
+[31m-<main>[m
+[31m-[m
+[31m-<h1>Cotizaciones</h1>[m
+[31m-    <table class="table">[m
+[31m-        <thead class="thead-dark">[m
+[31m-            <tr>[m
+[31m-                <th>#</th>[m
+[31m-                <th>Cedula</th>[m
+[31m-                <th>Ancho</th>[m
+[31m-                <th>Alto</th>[m
+[31m-                <th>Mando</th>[m
+[31m-                <th>Valor total </th>[m
+[31m-                <th>Fecha de cotizacion</th>[m
+[31m-            </tr>[m
+[31m-        </thead>[m
+[31m-[m
+[31m-        <tbody>[m
+[31m-            @foreach($cotizaciones as $cotizacion)[m
+[32m+[m[32m<main id="main-section">[m
+[32m+[m[32m    @if(Session::has('mensaje'))[m
+[32m+[m[32m        <div class="alert alert-success alert-dismissible" role="alert">[m
+[32m+[m[32m            {{ Session::get('mensaje')}}[m
+[32m+[m[32m            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>[m
+[32m+[m[32m        </div>[m
+[32m+[m[32m    @endif[m
+[32m+[m
+[32m+[m[32m    @if(Session::has('mensajeerror'))[m
+[32m+[m[32m        <div class="alert alert-danger alert-dismissible" role="alert">[m
+[32m+[m[32m            {{ Session::get('mensajeerror')}}[m
+[32m+[m[32m            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>[m
+[32m+[m[32m        </div>[m
+[32m+[m[32m    @endif[m
+[32m+[m
+[32m+[m[32m    <div class="titulo">[m
+[32m+[m[32m        <h2>Cotizaciones</h2>[m
+[32m+[m[32m        <a><ion-icon name="notifications-circle-outline"></ion-icon> <span>Notificaciones</span></a>[m
+[32m+[m[32m    </div>[m
+[32m+[m
+[32m+[m[32m    <div class="div-boton">[m
+[32m+[m[32m        <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#createModalCotizaciones">New cotizacion</button>[m
+[32m+[m[32m    </div>[m
+[32m+[m
+[32m+[m[32m    @include('cotizaciones.create')[m
+[32m+[m[32m    <div class="table-container">[m
+[32m+[m[32m        <table id="tablas">[m
+[32m+[m[32m            <thead>[m
+                 <tr>[m
+[31m-                    <td>{{ $cotizacion -> idCotizaciones }}</td>[m
+[31m-                    <td>{{ $cotizacion -> Cedula_cli_coti }}</td>[m
+[31m-                    <td>{{ $cotizacion -> Ancho_coti }} </td>[m
+[31m-                    <td>{{ $cotizacion -> Alto_coti }}</td>[m
+[31m-                    <td>{{ $cotizacion -> Mando_coti }}</td>[m
+[31m-                    <td>{{ $cotizacion -> Valortotal_coti }}</td>[m
+[31m-                    <td>{{ $cotizacion -> Fecha_coti }}</td>[m
+[32m+[m[32m                    <th>Cliente</th>[m
+[32m+[m[32m                    <th>Ancho</th>[m
+[32m+[m[32m                    <th>Alto</th>[m
+[32m+[m[32m                    <th>Mando</th>[m
+[32m+[m[32m                    <th>Producto</th>[m
+[32m+[m[32m                    <th>Valor total </th>[m
+[32m+[m[32m                    <th>Fecha de cotizacion</th>[m
+[32m+[m[32m                    <th>Opciones</th>[m
+                 </tr>[m
+[31m-            @endforeach[m
+[31m-        </tbody>[m
+[31m-    </table>[m
+[32m+[m[32m            </thead>[m
+[32m+[m
+[32m+[m[32m            <tbody>[m
+[32m+[m[32m                @foreach($cotizaciones as $cotizacion)[m
+[32m+[m[32m                    <tr>[m
+[32m+[m[32m                        <td>{{ $cotizacion -> cliente -> Nombre_cli." ".$cotizacion -> cliente -> Apellidos_cli }}</td>[m
+[32m+[m[32m                        <td>{{ $cotizacion -> Ancho_coti }} </td>[m
+[32m+[m[32m                        <td>{{ $cotizacion -> Alto_coti }}</td>[m
+[32m+[m[32m                        <td>{{ $cotizacion -> Mando_coti }}</td>[m
+[32m+[m[32m                        <td>{{ $cotizacion -> Tipo_producto -> Nombre_tp }}</td>[m
+[32m+[m[32m                        <td>{{ "$ ".number_format($cotizacion->Valortotal_coti, 0, '.', ',') }}</td>[m
+[32m+[m[32m                        <td>{{ \Carbon\Carbon::parse($cotizacion->Fecha_coti)->format('d/m/Y') }}</td>[m
+[32m+[m[32m                        <td>[m
+[32m+[m[32m                            <button type="button" class="btn btn-success"> <ion-icon name="reader-outline"></ion-icon> </button>[m
+[32m+[m[32m                            <button type="button" class="btn btn-warning edit-btn" data-id="" data-bs-toggle="modal" data-bs-target="#editModal"><ion-icon name="create-outline"></ion-icon></button>[m
+[32m+[m[32m                            <form action="" method="post" style="display: inline;">[m
+[32m+[m[32m                                @csrf[m
+[32m+[m[32m                                {{ method_field('DELETE') }}[m
+[32m+[m[32m                                <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar esta cotizacion?')"><ion-icon name="trash-outline"></ion-icon></button>[m
+[32m+[m[32m                            </form>[m
+[32m+[m[32m                        </td>[m
+[32m+[m[32m                    </tr>[m
+[32m+[m[32m                @endforeach[m
+[32m+[m[32m            </tbody>[m
+[32m+[m[32m        </table>[m
+[32m+[m[32m    </div>[m
+[32m+[m
+[32m+[m
+ </main>[m

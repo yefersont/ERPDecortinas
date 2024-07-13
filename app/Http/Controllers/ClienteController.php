@@ -35,7 +35,7 @@ class ClienteController extends Controller
         $datos = request()->except('_token');
         Cliente::insert($datos);
         return redirect('clientes')->with('mensaje','El cliente fue agregado con exito!!.');
-
+        
     }
 
     /**
