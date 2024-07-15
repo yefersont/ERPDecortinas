@@ -22,10 +22,12 @@ Route::get('/', function () {
 });
 
 Route::resource('cotizaciones',CotizacioneController::class);
-Route::resource('ventas',VentaController::class);
-Route::resource('clientes',ClienteController::class);
+Route::put('cotizaciones/{id}', [CotizacioneController::class, 'update'])->name('ActualizarCotizacion');
 
-Route::put('update/{id}', [ClienteController::class, 'update'])->name('ActualizarCliente');
+Route::resource('ventas',VentaController::class);
+
+Route::resource('clientes',ClienteController::class);
+Route::put('clientes/{id}', [ClienteController::class, 'update'])->name('ActualizarCliente');
 
 Route::resource('deudores',DeudoreController::class);
 

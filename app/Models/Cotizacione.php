@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $Mando_coti
  * @property int $Valortotal_coti
  * @property Carbon $Fecha_coti
+ * @property int $Radicado_coti
  * 
  * @property Cliente $cliente
  * @property TipoProducto $tipo_producto
@@ -40,8 +41,10 @@ class Cotizacione extends Model
 		'Tp_producto_coti' => 'int',
 		'Ancho_coti' => 'float',
 		'Alto_coti' => 'float',
+		'Mando_coti' => 'string',
 		'Valortotal_coti' => 'int',
-		'Fecha_coti' => 'datetime'
+		'Fecha_coti' => 'datetime',
+		'Radicado_coti' => 'int'
 	];
 
 	protected $fillable = [
@@ -51,7 +54,8 @@ class Cotizacione extends Model
 		'Alto_coti',
 		'Mando_coti',
 		'Valortotal_coti',
-		'Fecha_coti'
+		'Fecha_coti',
+		'Radicado_coti'
 	];
 
 	public function cliente()
