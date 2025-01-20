@@ -1,4 +1,8 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
 import './bootstrap';
+
+
 
 const cloud = document.getElementById("cloud");
 const barraLateral = document.querySelector(".barra-lateral");
@@ -30,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-// Cambiar estado de modo oscuro al hacer clic en la palanca
+// Cambiar  de modo oscuro al hacer clic en la palanca
 palanca.addEventListener("click", () => {
     let body = document.body;
     if (body.classList.contains("dark-mode")) {
@@ -41,6 +45,8 @@ palanca.addEventListener("click", () => {
         localStorage.setItem("modoOscuro", "true");
     }
 });
+
+
 
 // Resto del código existente
 menu.addEventListener("click", () => {
@@ -124,5 +130,18 @@ $('#tablas').DataTable({
   })()
 
 
-  //////////////////
+  ////////////////// Validacion de solo numeros ////////////
+  document.addEventListener("DOMContentLoaded", function() {
+    var inputsNumericos = document.querySelectorAll("[data-input-numerico]");
+
+    inputsNumericos.forEach(function(input) {
+        input.addEventListener("keypress", function(event) {
+            var charCode = event.which ? event.which : event.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                event.preventDefault();
+            }
+        });
+    });
+});
+
 

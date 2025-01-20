@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Cotizacione;
 use App\Models\Cliente;
 use App\Models\TipoProducto;
+use App\Models\Deudore;
+use App\Models\Venta;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log; // Asegúrate de importar Log
+use Illuminate\Support\Facades\DB;
 
 
 class CotizacioneController extends Controller
@@ -37,53 +41,47 @@ class CotizacioneController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    { // Añade un mensaje de depuración
-        Log::info('Entrando a la función store');
 
-        $datos = $request->all();
-        Log::info('Datos recibidos', $datos);
 
-        // Buscar el cliente por su número de cédula
-        $cliente = Cliente::where('Cedula_cli', $datos['Cedula_cli_coti'])->first();
-
-        if (!$cliente) {
-            // Si el cliente no existe, redirigir con un mensaje de error
-            Log::error('Cliente no encontrado', ['Cedula_cli_coti' => $datos['Cedula_cli_coti']]);
-            return redirect()->back()->withErrors(['Cedula_cli_coti' => 'Cliente no encontrado.']);
-        }
-
-        Log::info('Cliente encontrado', ['idClientes' => $cliente->idClientes]);
-
-        // Asegurarse de que todos los datos necesarios estén presentes
-        $camposNecesarios = ['Fecha_coti', 'Radicado_coti', 'Alto_coti', 'Ancho_coti', 'Tp_producto_coti', 'Mando_coti', 'Valortotal_coti'];
-        foreach ($camposNecesarios as $campo) {
-            if (!isset($datos[$campo])) {
-                Log::error('Campo faltante', ['campo' => $campo]);
-                return redirect()->back()->withErrors(['campo_faltante' => "El campo {$campo} es requerido."]);
-            }
-        }
-
-        $cotizacionData = [
-            'Cedula_cli_coti' => $cliente->idClientes, // Usar el idClientes del cliente encontrado
-            'Fecha_coti' => $datos['Fecha_coti'],
-            'Radicado_coti' => $datos['Radicado_coti'],
-            'Alto_coti' => $datos['Alto_coti'],
-            'Ancho_coti' => $datos['Ancho_coti'],
-            'Tp_producto_coti' => $datos['Tp_producto_coti'],
-            'Mando_coti' => $datos['Mando_coti'],
-            'Valortotal_coti' => $datos['Valortotal_coti'],
-        ];
-
-        Log::info('Datos de la cotización', $cotizacionData);
-
-        // Insertar la cotización
-        Cotizacione::create($cotizacionData);
-
-        Log::info('Cotización insertada');
-
-        // Redirigir con un mensaje de éxito
-        return redirect('cotizaciones')->with('mensaje', 'La cotización se registró con éxito.');    }
+     public function store(Request $request)
+     {
+         // Validación de datos
+         $request->validate([
+             'Cedula_cli_coti' => 'required|numeric',  // La cédula debe ser un número
+             'Tp_producto_coti' => 'required|integer',
+             'Ancho_coti' => 'required|numeric',
+             'Alto_coti' => 'required|numeric',
+             'Mando_coti' => 'required|string',
+             'Valortotal_coti' => 'required|integer',
+             'Fecha_coti' => 'required|date',
+             'Radicado_coti' => 'required|integer',
+         ]);
+     
+         // Buscar el cliente por cédula
+         $cliente = Cliente::where('Cedula_cli', $request->Cedula_cli_coti)->first();
+     
+         // Si el cliente no existe, retornamos un error
+         if (!$cliente) {
+             return redirect()->back()->with('mensajeerror', 'Cliente no encontrado con la cédula proporcionada.');
+         }
+     
+         // Crear la cotización usando el idClientes
+         $cotizacion = new Cotizacione();
+         $cotizacion->Cedula_cli_coti = $cliente->idClientes;  // Usamos el idClientes, no la cédula
+         $cotizacion->Tp_producto_coti = $request->Tp_producto_coti;
+         $cotizacion->Ancho_coti = $request->Ancho_coti;
+         $cotizacion->Alto_coti = $request->Alto_coti;
+         $cotizacion->Mando_coti = $request->Mando_coti;
+         $cotizacion->Valortotal_coti = $request->Valortotal_coti;
+         $cotizacion->Fecha_coti = $request->Fecha_coti;
+         $cotizacion->Radicado_coti = $request->Radicado_coti;
+     
+         // Guardar la cotización
+         $cotizacion->save();
+     
+         // Redirigir a la lista de cotizaciones con un mensaje de éxito
+         return redirect()->route('cotizaciones.index')->with('mensaje', 'Cotización registrada correctamente.');
+     }
 
 
     /**

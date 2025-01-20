@@ -31,7 +31,6 @@
         <table id="tablas">
             <thead>
                 <tr>
-                    <th>#</th>
                     <th>Cedula</th>
                     <th>Nombre</th>
                     <th>Apellidos</th>
@@ -43,7 +42,6 @@
             <tbody>
                 @foreach($clientes as $cliente)
                     <tr>
-                        <td>{{ $cliente->idClientes }}</td>
                         <td>{{ $cliente->Cedula_cli }}</td>
                         <td>{{ $cliente->Nombre_cli }}</td>
                         <td>{{ $cliente->Apellidos_cli }}</td>

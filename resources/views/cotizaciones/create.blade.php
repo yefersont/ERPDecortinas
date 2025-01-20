@@ -17,7 +17,7 @@
                                 Por favor complete el campo
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                             <label for="input2" class="form-label">Fecha de cotizacion</label>
                             <input type="date" id="input2" name="Fecha_coti" class="form-control w-95" required>
                             <div class="invalid-feedback">
@@ -31,6 +31,10 @@
                                 Por favor complete el campo
                             </div>
                         </div>
+                        <div class="col-md-2 mb-3">
+                            <label for="input3" class="form-label">#productos</label>
+                            <input type="number" name="Numero_productos" class="form-control w-50" value="1" required>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md-2 mb-3">
@@ -40,7 +44,7 @@
                                 Por favor complete el campo
                             </div>
                         </div>
-                        <div class="col-md-2 mb-3">
+                        <div class="col-md-2 mb-3"> 
                             <label for="input5" class="form-label">Ancho</label>
                             <input type="text" data-input-numerico id="input5" name="Ancho_coti" class="form-control w-95" placeholder="Ingrese ancho..." required>
                             <div class="invalid-feedback">
@@ -80,50 +84,49 @@
                         </div>
 
 
-                        <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const input = document.getElementById('input8');
+                            <script>
+                            document.addEventListener("DOMContentLoaded", function() {
+                            const input = document.getElementById('input8');
 
-    input.addEventListener('input', function() {
-        // Get cursor position
-        let cursorPosition = this.selectionStart;
-        
-        // Get the length of the input before formatting
-        let originalLength = this.value.length;
+                            input.addEventListener('input', function() {
+                                // Get cursor position
+                                let cursorPosition = this.selectionStart;
+                                
+                                // Get the length of the input before formatting
+                                let originalLength = this.value.length;
 
-        // Remove non-numeric characters
-        let value = this.value.replace(/[^0-9]/g, '');
-        if (value === '') return;
+                                // Remove non-numeric characters
+                                let value = this.value.replace(/[^0-9]/g, '');
+                                if (value === '') return;
 
-        // Format the number as currency without decimals
-        let numberValue = parseInt(value);
-        let formattedValue = new Intl.NumberFormat('es-CO', { 
-            style: 'currency', 
-            currency: 'COP', 
-            minimumFractionDigits: 0 
-        }).format(numberValue);
+                                // Format the number as currency without decimals
+                                let numberValue = parseInt(value);
+                                let formattedValue = new Intl.NumberFormat('es-CO', { 
+                                    style: 'currency', 
+                                    currency: 'COP', 
+                                    minimumFractionDigits: 0 
+                                }).format(numberValue);
 
-        // Update the input value with the formatted value
-        this.value = formattedValue;
+                                // Update the input value with the formatted value
+                                this.value = formattedValue;
 
-        // Calculate the new cursor position
-        let newLength = this.value.length;
-        cursorPosition = newLength - (originalLength - cursorPosition);
+                                // Calculate the new cursor position
+                                let newLength = this.value.length;
+                                cursorPosition = newLength - (originalLength - cursorPosition);
 
-        // Set the cursor position back to where it was
-        this.setSelectionRange(cursorPosition, cursorPosition);
-    });
+                                // Set the cursor position back to where it was
+                                this.setSelectionRange(cursorPosition, cursorPosition);
+                            });
 
-    const form = input.closest('form');
-    form.addEventListener('submit', function() {
-        let rawValue = input.value.replace(/[^0-9]/g, '');
-        input.value = rawValue;
-    });
-});
-</script>
-                    </div>
-                                        
-                    </div>
+                            const form = input.closest('form');
+                            form.addEventListener('submit', function() {
+                                let rawValue = input.value.replace(/[^0-9]/g, '');
+                                input.value = rawValue;
+                            });
+                        });
+                        </script>
+                    </div>               
+                </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success"> Registrar </button>
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal"> Cancelar</button>

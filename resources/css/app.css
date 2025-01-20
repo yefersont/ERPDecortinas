@@ -367,3 +367,27 @@ th {
 
 
 
+
+/************************** Notificaiones ************************/
+
+.notificacion {
+    position: relative;
+    padding: 10px;
+    border-radius: 5px;
+    color: white;
+    font-size: 16px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.notificacion.success {
+    background-color: green;
+}
+
+.notificacion.error {
+    background-color: red;
+}
+
+.notificacion.info {
+    background-color: blue;
+}
+

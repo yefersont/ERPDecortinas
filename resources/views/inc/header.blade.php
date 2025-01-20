@@ -11,7 +11,7 @@
 
     <link rel="stylesheet" href="{{ asset('fontawesome-free-6.5.2-web/css/all.min') }}">
 
-    @vite(['resources/css/app.css','resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.jsx', 'resources/js/app.ts'])
 
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,30 +31,32 @@
                 <ion-icon id="cloud" name="cloud-outline"></ion-icon>
                 <span>ERP Decortinas</span>
             </div>
-            <button class="boton">
-                <ion-icon name="add-outline"></ion-icon>
-                <span>Create new</span>
-            </button>
         </div>
 
         <nav class="navegacion">
             <ul>
                 <li>
+                    <a href="{{ url('citas/') }}">
+                    <ion-icon name="time-outline"></ion-icon>
+                    <span>Citas</span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ url('cotizaciones/') }}">
-                        <ion-icon name="mail-unread-outline"></ion-icon>
-                        <span>Cotizaciones</span>
+                    <ion-icon name="document-text-outline"></ion-icon>
+                    <span>Cotizaciones</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ url('ventas/') }}">
-                        <ion-icon name="star-outline"></ion-icon>
-                        <span>Ventas</span>
+                    <ion-icon name="card-outline"></ion-icon>                        
+                    <span>Ventas</span>
                     </a>
                 </li>
                 <li>
                     <a href="{{ url('clientes/') }}">
-                        <ion-icon name="paper-plane-outline"></ion-icon>
-                        <span>Clientes</span>
+                    <ion-icon name="people-circle-outline"></ion-icon>
+                    <span>Clientes</span>
                     </a>
                 </li>
 
@@ -62,6 +64,13 @@
                     <a href="{{ url('deudores/') }}">
                         <ion-icon name="alert-circle-outline"></ion-icon>
                         <span>Deudores</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ url('divisas/') }}">
+                    <ion-icon name="cash-outline"></ion-icon>    
+                    <span>Divisas</span>
                     </a>
                 </li>
             </ul>
